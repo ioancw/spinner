@@ -250,9 +250,6 @@
       <button id="update" type="button">Update wheel</button>
       <button id="reset" type="button">Reset to book names</button>
     </div>
-    <div class="btn-row" style="margin-top:-6px">
-      <button id="spin" class="primary" type="button">Spin</button>
-    </div>
   </div>
   <p class="hint">Lands on a random segment using <code>Math.random()</code>.</p>
 
@@ -579,7 +576,6 @@
 
   /* ---------- Controls ---------- */
   function setButtonsDisabled(d) {
-    document.getElementById("spin").disabled = d;
     document.getElementById("update").disabled = d;
     document.getElementById("reset").disabled = d;
     document.getElementById("hub").disabled = d;
@@ -615,7 +611,6 @@
   }
 
   // Wire up
-  document.getElementById("spin").addEventListener("click", spin);
   document.getElementById("hub").addEventListener("click", spin);
   document.getElementById("update").addEventListener("click", updateFromTextarea);
   document.getElementById("reset").addEventListener("click", resetNames);
