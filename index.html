@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Spinner Wheel — Name Picker</title>
+<title>Random Wheel of Class Rep</title>
 <style>
   :root {
     --bg: #0f1024;
@@ -222,19 +222,6 @@
     100% { opacity: 0; transform: translate(-50%,-50%) scale(0.95); }
   }
 
-  .sound-toggle {
-    position: fixed;
-    top: 12px; right: 12px;
-    z-index: 70;
-    width: auto; min-width: 0;
-    flex: none;
-    padding: 8px 12px;
-    font-size: 0.85rem;
-    background: rgba(27,29,58,0.85);
-    color: var(--text);
-    border: 1px solid #34376b;
-  }
-
   @media (prefers-reduced-motion: reduce) {
     body { animation: none; }
     h1 { animation: none; -webkit-text-fill-color: var(--accent); }
@@ -244,10 +231,8 @@
 </style>
 </head>
 <body>
-  <button class="sound-toggle" id="sound" type="button" aria-pressed="false" title="Toggle sound">🔇 Sound</button>
-
-  <h1>🎡 Spinner Wheel</h1>
-  <p class="subtitle">Tap the hub or press Spin to pick a name</p>
+  <h1>🎡 Random Wheel of Class Rep</h1>
+  <p class="subtitle" id="strap">Who's it going to be?</p>
 
   <div class="ticker" id="ticker" aria-live="polite">Ready!</div>
 
@@ -265,7 +250,7 @@
       <button id="update" type="button">Update wheel</button>
       <button id="reset" type="button">Reset to book names</button>
     </div>
-    <div class="btn-row">
+    <div class="btn-row" style="margin-top:-6px">
       <button id="spin" class="primary" type="button">Spin</button>
     </div>
   </div>
@@ -307,43 +292,15 @@
   var tickerTimer = null;
   var lastTickSeg = -1;
 
-  function size() { return canvas.width; }
+  var strap = document.getElementById("strap");
+  function updateStrap() {
+    var n = names.length;
+    strap.textContent = n > 0
+      ? "One in " + n + " — who's it going to be?"
+      : "Add some names to get started";
+  }
 
-  /* ---------- Sound (Web Audio, opt-in) ---------- */
-  var soundOn = false;
-  var audioCtx = null;
-  var soundBtn = document.getElementById("sound");
-  soundBtn.addEventListener("click", function () {
-    soundOn = !soundOn;
-    soundBtn.setAttribute("aria-pressed", soundOn ? "true" : "false");
-    soundBtn.textContent = soundOn ? "🔊 Sound" : "🔇 Sound";
-    if (soundOn && !audioCtx) {
-      try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-      catch (e) { audioCtx = null; }
-    }
-    if (soundOn && audioCtx && audioCtx.state === "suspended") audioCtx.resume();
-  });
-  function beep(freq, dur, type, gain) {
-    if (!soundOn || !audioCtx) return;
-    var o = audioCtx.createOscillator();
-    var g = audioCtx.createGain();
-    o.type = type || "square";
-    o.frequency.value = freq;
-    g.gain.value = gain || 0.05;
-    o.connect(g); g.connect(audioCtx.destination);
-    var t = audioCtx.currentTime;
-    g.gain.setValueAtTime(g.gain.value, t);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    o.start(t); o.stop(t + dur);
-  }
-  function tick() { beep(900, 0.04, "square", 0.04); }
-  function fanfare() {
-    if (!soundOn || !audioCtx) return;
-    var notes = [523, 659, 784, 1047];
-    notes.forEach(function (f, i) {
-      setTimeout(function () { beep(f, 0.28, "triangle", 0.07); }, i * 110);
-    });
-  }
+  function size() { return canvas.width; }
 
   /* ---------- Wheel drawing ---------- */
   function drawWheel() {
@@ -479,7 +436,6 @@
     ticker.classList.add("win");
     showBanner(names[idx]);
     burstConfetti();
-    fanfare();
   }
 
   function showBanner(name) {
@@ -540,7 +496,6 @@
       var seg = winnerIndex();
       if (seg !== lastTickSeg) {
         lastTickSeg = seg;
-        tick();
         pointer.classList.remove("kick");
         void pointer.offsetWidth;
         pointer.classList.add("kick");
@@ -643,6 +598,7 @@
     names = parseNames(namesInput.value);
     rotation = 0;
     drawWheel();
+    updateStrap();
     ticker.classList.remove("win");
     ticker.textContent = names.length ? "Ready!" : "Add some names";
   }
@@ -653,6 +609,7 @@
     syncTextarea();
     rotation = 0;
     drawWheel();
+    updateStrap();
     ticker.classList.remove("win");
     ticker.textContent = "Ready!";
   }
@@ -666,6 +623,7 @@
   // Init
   syncTextarea();
   drawWheel();
+  updateStrap();
 })();
 </script>
 </body>
