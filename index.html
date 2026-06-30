@@ -15,7 +15,9 @@
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
-    background: radial-gradient(circle at 50% 0%, #232653 0%, var(--bg) 70%);
+    background: linear-gradient(135deg, #1a0b2e 0%, #16213e 35%, #0f3460 70%, #1a0b2e 100%);
+    background-size: 300% 300%;
+    animation: bgShift 18s ease infinite;
     color: var(--text);
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     min-height: 100vh;
@@ -23,15 +25,31 @@
     flex-direction: column;
     align-items: center;
     padding: 16px;
+    overflow-x: hidden;
+  }
+  @keyframes bgShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
   h1 {
-    font-size: clamp(1.3rem, 4vw, 2rem);
+    font-size: clamp(1.5rem, 5vw, 2.4rem);
     margin: 0.4em 0 0.2em;
     text-align: center;
+    background: linear-gradient(90deg, #ffcb05, #ff006e, #3a86ff, #06d6a0, #ffcb05);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 4s linear infinite;
+    filter: drop-shadow(0 2px 10px rgba(255, 0, 110, 0.35));
+  }
+  @keyframes shimmer {
+    to { background-position: 200% center; }
   }
   .subtitle { color: var(--muted); margin: 0 0 12px; text-align: center; font-size: 0.9rem; }
   .ticker {
-    font-size: clamp(1.4rem, 6vw, 2.4rem);
+    font-size: clamp(1.5rem, 6.5vw, 2.6rem);
     font-weight: 800;
     letter-spacing: 0.5px;
     min-height: 1.4em;
@@ -40,51 +58,97 @@
     text-shadow: 0 2px 12px rgba(255, 203, 5, 0.35);
     transition: transform 0.15s ease;
   }
-  .ticker.win { transform: scale(1.12); }
+  .ticker.flashing {
+    color: #fff;
+    animation: tickerPulse 0.18s ease-in-out infinite alternate;
+  }
+  @keyframes tickerPulse {
+    from { text-shadow: 0 0 8px rgba(255,255,255,0.5); }
+    to   { text-shadow: 0 0 22px rgba(58,134,255,0.9), 0 0 38px rgba(255,0,110,0.6); }
+  }
+  .ticker.win {
+    color: #fff;
+    animation: winPop 0.6s cubic-bezier(.18,.89,.32,1.28) both, winGlow 1.1s ease-in-out infinite alternate;
+  }
+  @keyframes winPop {
+    0%   { transform: scale(0.6); }
+    60%  { transform: scale(1.25); }
+    100% { transform: scale(1.12); }
+  }
+  @keyframes winGlow {
+    from { text-shadow: 0 0 14px rgba(255,203,5,0.8), 0 0 28px rgba(255,0,110,0.5); }
+    to   { text-shadow: 0 0 26px rgba(255,203,5,1), 0 0 52px rgba(58,134,255,0.8); }
+  }
   .wheel-wrap {
     position: relative;
-    width: min(90vw, 440px);
+    width: min(90vw, 460px);
     aspect-ratio: 1 / 1;
     margin: 8px 0 4px;
   }
-  canvas { width: 100%; height: 100%; display: block; touch-action: manipulation; }
+  .wheel-glow {
+    position: absolute;
+    inset: -6%;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, #ff006e, #ffcb05, #06d6a0, #3a86ff, #8338ec, #ff006e);
+    filter: blur(22px);
+    opacity: 0.55;
+    z-index: 0;
+    animation: glowSpin 6s linear infinite;
+  }
+  .wheel-wrap.spinning .wheel-glow { animation-duration: 1.2s; opacity: 0.8; }
+  @keyframes glowSpin { to { transform: rotate(360deg); } }
+  canvas#wheel { position: relative; width: 100%; height: 100%; display: block; touch-action: manipulation; z-index: 1; }
   .pointer {
     position: absolute;
-    top: -6px;
+    top: -10px;
     left: 50%;
     transform: translateX(-50%);
     width: 0; height: 0;
-    border-left: 16px solid transparent;
-    border-right: 16px solid transparent;
-    border-top: 26px solid var(--accent);
-    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
-    z-index: 3;
+    border-left: 18px solid transparent;
+    border-right: 18px solid transparent;
+    border-top: 30px solid var(--accent);
+    filter: drop-shadow(0 0 6px rgba(255,203,5,0.9)) drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+    z-index: 4;
+  }
+  .pointer.kick { animation: kick 0.12s ease; }
+  @keyframes kick {
+    0% { transform: translateX(-50%) rotate(0deg); }
+    50% { transform: translateX(-50%) rotate(-14deg); }
+    100% { transform: translateX(-50%) rotate(0deg); }
   }
   .hub {
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    width: 22%; height: 22%;
+    width: 23%; height: 23%;
     border-radius: 50%;
-    background: var(--accent);
+    background: radial-gradient(circle at 35% 30%, #fff6c0, var(--accent) 60%, #e0a800);
     color: #1b1d3a;
     border: 5px solid #fff;
-    font-weight: 800;
+    font-weight: 900;
     font-size: clamp(0.8rem, 3vw, 1.1rem);
     cursor: pointer;
-    box-shadow: 0 4px 18px rgba(0,0,0,0.45);
-    z-index: 2;
+    z-index: 3;
     display: flex; align-items: center; justify-content: center;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 0 0 0 rgba(255,203,5,0.7), 0 4px 18px rgba(0,0,0,0.45);
+    animation: hubPulse 2s ease-in-out infinite;
   }
-  .hub:active { transform: translate(-50%, -50%) scale(0.94); }
+  @keyframes hubPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(255,203,5,0.7), 0 4px 18px rgba(0,0,0,0.45); }
+    70%  { box-shadow: 0 0 0 16px rgba(255,203,5,0), 0 4px 18px rgba(0,0,0,0.45); }
+    100% { box-shadow: 0 0 0 0 rgba(255,203,5,0), 0 4px 18px rgba(0,0,0,0.45); }
+  }
+  .hub:active { transform: translate(-50%, -50%) scale(0.92); }
   .controls {
-    width: min(92vw, 440px);
+    width: min(92vw, 460px);
     display: flex;
     flex-direction: column;
     gap: 10px;
     margin-top: 10px;
+    position: relative;
+    z-index: 1;
   }
   textarea {
     width: 100%;
@@ -92,7 +156,7 @@
     resize: vertical;
     border-radius: 12px;
     border: 1px solid #34376b;
-    background: var(--panel);
+    background: rgba(27, 29, 58, 0.85);
     color: var(--text);
     padding: 10px 12px;
     font-size: 0.95rem;
@@ -111,26 +175,85 @@
     cursor: pointer;
     color: #1b1d3a;
     background: #d7d9f5;
-    transition: transform 0.08s ease, filter 0.15s ease;
+    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
     -webkit-tap-highlight-color: transparent;
   }
-  button.primary { background: var(--accent); }
+  button.primary {
+    background: linear-gradient(135deg, #ffcb05, #ff8a00);
+    color: #2a1500;
+    box-shadow: 0 4px 16px rgba(255,138,0,0.4);
+  }
+  button:hover { filter: brightness(1.08); }
   button:active { transform: translateY(1px); }
   button:disabled { filter: grayscale(0.6) opacity(0.6); cursor: default; }
   .hint { color: var(--muted); font-size: 0.8rem; text-align: center; margin: 4px 0 24px; }
+
+  /* Confetti + winner banner overlay */
+  #fx {
+    position: fixed; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 50;
+  }
+  .winner-banner {
+    position: fixed;
+    top: 38%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.6);
+    background: linear-gradient(135deg, rgba(255,0,110,0.95), rgba(131,56,236,0.95));
+    color: #fff;
+    padding: 18px 30px;
+    border-radius: 18px;
+    font-weight: 900;
+    font-size: clamp(1.4rem, 6vw, 2.6rem);
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 0 4px rgba(255,255,255,0.25) inset;
+    z-index: 60;
+    opacity: 0;
+    pointer-events: none;
+    max-width: 88vw;
+  }
+  .winner-banner.show { animation: bannerIn 2.4s cubic-bezier(.18,.89,.32,1.28) forwards; }
+  .winner-banner small { display: block; font-size: 0.5em; font-weight: 700; opacity: 0.85; margin-bottom: 4px; }
+  @keyframes bannerIn {
+    0%   { opacity: 0; transform: translate(-50%,-50%) scale(0.5) rotate(-6deg); }
+    12%  { opacity: 1; transform: translate(-50%,-50%) scale(1.08) rotate(2deg); }
+    20%  { transform: translate(-50%,-50%) scale(1) rotate(0deg); }
+    82%  { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%,-50%) scale(0.95); }
+  }
+
+  .sound-toggle {
+    position: fixed;
+    top: 12px; right: 12px;
+    z-index: 70;
+    width: auto; min-width: 0;
+    flex: none;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    background: rgba(27,29,58,0.85);
+    color: var(--text);
+    border: 1px solid #34376b;
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .ticker, .ticker.win, .hub:active, button:active { transition: none; }
+    body { animation: none; }
+    h1 { animation: none; -webkit-text-fill-color: var(--accent); }
+    .ticker, .ticker.win, .ticker.flashing, .hub, .wheel-glow, .hub:active, button:active { animation: none; transition: none; }
+    .winner-banner.show { animation: none; opacity: 1; transform: translate(-50%,-50%) scale(1); }
   }
 </style>
 </head>
 <body>
+  <button class="sound-toggle" id="sound" type="button" aria-pressed="false" title="Toggle sound">🔇 Sound</button>
+
   <h1>🎡 Spinner Wheel</h1>
   <p class="subtitle">Tap the hub or press Spin to pick a name</p>
 
   <div class="ticker" id="ticker" aria-live="polite">Ready!</div>
 
-  <div class="wheel-wrap">
-    <div class="pointer" aria-hidden="true"></div>
+  <div class="wheel-wrap" id="wheelWrap">
+    <div class="wheel-glow" aria-hidden="true"></div>
+    <div class="pointer" id="pointer" aria-hidden="true"></div>
     <canvas id="wheel" width="600" height="600" aria-label="Spinner wheel"></canvas>
     <button class="hub" id="hub" type="button" aria-label="Spin the wheel">SPIN</button>
   </div>
@@ -147,6 +270,9 @@
     </div>
   </div>
   <p class="hint">Lands on a random segment using <code>Math.random()</code>.</p>
+
+  <canvas id="fx" aria-hidden="true"></canvas>
+  <div class="winner-banner" id="banner" aria-hidden="true"></div>
 
 <script>
 (function () {
@@ -171,19 +297,60 @@
   var ctx = canvas.getContext("2d");
   var ticker = document.getElementById("ticker");
   var namesInput = document.getElementById("names");
+  var wheelWrap = document.getElementById("wheelWrap");
+  var pointer = document.getElementById("pointer");
+  var banner = document.getElementById("banner");
 
   var names = DEFAULT_NAMES.slice();
   var rotation = 0;          // current rotation in radians
   var spinning = false;
   var tickerTimer = null;
+  var lastTickSeg = -1;
 
   function size() { return canvas.width; }
 
+  /* ---------- Sound (Web Audio, opt-in) ---------- */
+  var soundOn = false;
+  var audioCtx = null;
+  var soundBtn = document.getElementById("sound");
+  soundBtn.addEventListener("click", function () {
+    soundOn = !soundOn;
+    soundBtn.setAttribute("aria-pressed", soundOn ? "true" : "false");
+    soundBtn.textContent = soundOn ? "🔊 Sound" : "🔇 Sound";
+    if (soundOn && !audioCtx) {
+      try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+      catch (e) { audioCtx = null; }
+    }
+    if (soundOn && audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+  });
+  function beep(freq, dur, type, gain) {
+    if (!soundOn || !audioCtx) return;
+    var o = audioCtx.createOscillator();
+    var g = audioCtx.createGain();
+    o.type = type || "square";
+    o.frequency.value = freq;
+    g.gain.value = gain || 0.05;
+    o.connect(g); g.connect(audioCtx.destination);
+    var t = audioCtx.currentTime;
+    g.gain.setValueAtTime(g.gain.value, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.start(t); o.stop(t + dur);
+  }
+  function tick() { beep(900, 0.04, "square", 0.04); }
+  function fanfare() {
+    if (!soundOn || !audioCtx) return;
+    var notes = [523, 659, 784, 1047];
+    notes.forEach(function (f, i) {
+      setTimeout(function () { beep(f, 0.28, "triangle", 0.07); }, i * 110);
+    });
+  }
+
+  /* ---------- Wheel drawing ---------- */
   function drawWheel() {
     var n = names.length;
     var w = size();
     var cx = w / 2, cy = w / 2;
-    var radius = w / 2 - 6;
+    var radius = w / 2 - 10;
     ctx.clearRect(0, 0, w, w);
 
     if (n === 0) {
@@ -206,13 +373,20 @@
 
     for (var i = 0; i < n; i++) {
       var start = i * arc;
+      var base = PALETTE[i % PALETTE.length];
+      // radial gradient per slice for depth/shine
+      var grad = ctx.createRadialGradient(0, 0, radius * 0.12, 0, 0, radius);
+      grad.addColorStop(0, lighten(base, 0.35));
+      grad.addColorStop(0.65, base);
+      grad.addColorStop(1, darken(base, 0.22));
+
       ctx.beginPath();
       ctx.moveTo(0, 0);
       ctx.arc(0, 0, radius, start, start + arc);
       ctx.closePath();
-      ctx.fillStyle = PALETTE[i % PALETTE.length];
+      ctx.fillStyle = grad;
       ctx.fill();
-      ctx.strokeStyle = "rgba(0,0,0,0.18)";
+      ctx.strokeStyle = "rgba(255,255,255,0.25)";
       ctx.lineWidth = 2;
       ctx.stroke();
 
@@ -222,33 +396,63 @@
       ctx.textAlign = "right";
       ctx.textBaseline = "middle";
       ctx.fillStyle = "#fff";
-      ctx.shadowColor = "rgba(0,0,0,0.45)";
-      ctx.shadowBlur = 3;
+      ctx.shadowColor = "rgba(0,0,0,0.55)";
+      ctx.shadowBlur = 4;
       var fontSize = Math.max(11, Math.min(w * 0.045, (radius * 0.9) / Math.max(names[i].length, 6) * 1.6));
       ctx.font = "bold " + fontSize + "px system-ui, sans-serif";
       var label = names[i].length > 16 ? names[i].slice(0, 15) + "…" : names[i];
-      ctx.fillText(label, radius - 14, 0);
+      ctx.fillText(label, radius - 16, 0);
       ctx.restore();
     }
     ctx.restore();
 
-    // outer rim
+    // metallic outer rim
+    var rim = ctx.createLinearGradient(0, 0, w, w);
+    rim.addColorStop(0, "#fff7cc");
+    rim.addColorStop(0.5, "#ffcb05");
+    rim.addColorStop(1, "#b8860b");
     ctx.beginPath();
-    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(255,255,255,0.85)";
-    ctx.lineWidth = 6;
+    ctx.arc(cx, cy, radius + 2, 0, Math.PI * 2);
+    ctx.strokeStyle = rim;
+    ctx.lineWidth = 8;
     ctx.stroke();
+
+    // studs around the rim for arcade flair
+    var studs = Math.min(Math.max(n, 12), 24);
+    for (var s = 0; s < studs; s++) {
+      var a = (s / studs) * Math.PI * 2;
+      var sx = cx + Math.cos(a) * (radius + 2);
+      var sy = cy + Math.sin(a) * (radius + 2);
+      ctx.beginPath();
+      ctx.arc(sx, sy, 3.2, 0, Math.PI * 2);
+      ctx.fillStyle = "#fff";
+      ctx.shadowColor = "rgba(255,255,255,0.9)";
+      ctx.shadowBlur = 6;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
   }
 
-  // The pointer sits at the top (12 o'clock = -PI/2 in canvas coords).
-  // Determine which segment is under the pointer for a given rotation.
+  function lighten(hex, amt) { return mix(hex, "#ffffff", amt); }
+  function darken(hex, amt) { return mix(hex, "#000000", amt); }
+  function mix(a, b, t) {
+    var ca = hex2rgb(a), cb = hex2rgb(b);
+    var r = Math.round(ca[0] + (cb[0] - ca[0]) * t);
+    var g = Math.round(ca[1] + (cb[1] - ca[1]) * t);
+    var bl = Math.round(ca[2] + (cb[2] - ca[2]) * t);
+    return "rgb(" + r + "," + g + "," + bl + ")";
+  }
+  function hex2rgb(h) {
+    h = h.replace("#", "");
+    return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+  }
+
+  // Pointer at top (12 o'clock = -PI/2). Which segment is under it?
   function winnerIndex() {
     var n = names.length;
     if (n === 0) return -1;
     var arc = (Math.PI * 2) / n;
-    // Angle at pointer, relative to wheel's own frame.
     var pointerAngle = (-Math.PI / 2) - rotation;
-    // normalize to [0, 2PI)
     var a = ((pointerAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
     return Math.floor(a / arc) % n;
   }
@@ -256,14 +460,16 @@
   function startTickerFlash() {
     stopTickerFlash();
     ticker.classList.remove("win");
+    ticker.classList.add("flashing");
     tickerTimer = setInterval(function () {
       if (names.length === 0) return;
       var r = Math.floor(Math.random() * names.length);
       ticker.textContent = names[r];
-    }, 80);
+    }, 75);
   }
   function stopTickerFlash() {
     if (tickerTimer) { clearInterval(tickerTimer); tickerTimer = null; }
+    ticker.classList.remove("flashing");
   }
 
   function announceWinner() {
@@ -271,6 +477,21 @@
     if (idx < 0) { ticker.textContent = "Add some names"; return; }
     ticker.textContent = names[idx];
     ticker.classList.add("win");
+    showBanner(names[idx]);
+    burstConfetti();
+    fanfare();
+  }
+
+  function showBanner(name) {
+    banner.innerHTML = "<small>🎉 Winner 🎉</small>" + escapeHtml(name);
+    banner.classList.remove("show");
+    void banner.offsetWidth; // restart animation
+    banner.classList.add("show");
+  }
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
   }
 
   function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
@@ -279,24 +500,22 @@
     if (spinning || names.length === 0) return;
     spinning = true;
     setButtonsDisabled(true);
+    wheelWrap.classList.add("spinning");
+    lastTickSeg = -1;
 
-    // Pick the random outcome up front using Math.random().
     var n = names.length;
     var arc = (Math.PI * 2) / n;
-    var target = Math.floor(Math.random() * n);
+    var target = Math.floor(Math.random() * n);  // random outcome via Math.random()
 
-    // Compute a rotation that lands `target` under the pointer.
-    // We want winnerIndex() === target at the end. Solve for rotation:
-    //   pointerAngle = -PI/2 - rotation ; segment = floor(norm(pointerAngle)/arc)
-    // Aim for the centre of the target segment.
-    var desiredPointer = target * arc + arc / 2;        // centre of target in wheel frame
-    var baseRotation = -Math.PI / 2 - desiredPointer;   // rotation that puts it under pointer
-    var fullSpins = 5 + Math.floor(Math.random() * 3);  // 5..7 turns
+    var desiredPointer = target * arc + arc / 2;
+    var baseRotation = -Math.PI / 2 - desiredPointer;
+    var fullSpins = 5 + Math.floor(Math.random() * 3);
     var finalRotation = baseRotation - fullSpins * Math.PI * 2;
 
     if (prefersReduced) {
       rotation = ((finalRotation % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
       drawWheel();
+      wheelWrap.classList.remove("spinning");
       announceWinner();
       spinning = false;
       setButtonsDisabled(false);
@@ -316,12 +535,24 @@
       var t = Math.min(elapsed / duration, 1);
       rotation = startRotation + delta * easeOutCubic(t);
       drawWheel();
+
+      // tick + pointer kick when crossing a segment boundary
+      var seg = winnerIndex();
+      if (seg !== lastTickSeg) {
+        lastTickSeg = seg;
+        tick();
+        pointer.classList.remove("kick");
+        void pointer.offsetWidth;
+        pointer.classList.add("kick");
+      }
+
       if (t < 1) {
         requestAnimationFrame(frame);
       } else {
         rotation = ((finalRotation % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
         drawWheel();
         stopTickerFlash();
+        wheelWrap.classList.remove("spinning");
         announceWinner();
         spinning = false;
         setButtonsDisabled(false);
@@ -330,6 +561,68 @@
     requestAnimationFrame(frame);
   }
 
+  /* ---------- Confetti ---------- */
+  var fx = document.getElementById("fx");
+  var fxCtx = fx.getContext("2d");
+  var confetti = [];
+  var fxRunning = false;
+
+  function resizeFx() {
+    fx.width = window.innerWidth;
+    fx.height = window.innerHeight;
+  }
+  window.addEventListener("resize", resizeFx);
+  resizeFx();
+
+  function burstConfetti() {
+    if (prefersReduced) return;
+    var colors = PALETTE;
+    var count = 140;
+    for (var i = 0; i < count; i++) {
+      confetti.push({
+        x: fx.width / 2 + (Math.random() - 0.5) * 120,
+        y: fx.height * 0.32,
+        vx: (Math.random() - 0.5) * 11,
+        vy: Math.random() * -13 - 4,
+        size: 5 + Math.random() * 7,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rot: Math.random() * Math.PI * 2,
+        vr: (Math.random() - 0.5) * 0.3,
+        life: 0
+      });
+    }
+    if (!fxRunning) { fxRunning = true; requestAnimationFrame(fxFrame); }
+  }
+
+  function fxFrame() {
+    fxCtx.clearRect(0, 0, fx.width, fx.height);
+    var gravity = 0.32;
+    for (var i = confetti.length - 1; i >= 0; i--) {
+      var p = confetti[i];
+      p.vy += gravity;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vx *= 0.99;
+      p.rot += p.vr;
+      p.life++;
+      fxCtx.save();
+      fxCtx.translate(p.x, p.y);
+      fxCtx.rotate(p.rot);
+      fxCtx.fillStyle = p.color;
+      fxCtx.globalAlpha = Math.max(0, 1 - p.life / 130);
+      fxCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+      fxCtx.restore();
+      if (p.y > fx.height + 40 || p.life > 150) confetti.splice(i, 1);
+    }
+    if (confetti.length > 0) {
+      requestAnimationFrame(fxFrame);
+    } else {
+      fxRunning = false;
+      fxCtx.clearRect(0, 0, fx.width, fx.height);
+    }
+  }
+
+  /* ---------- Controls ---------- */
   function setButtonsDisabled(d) {
     document.getElementById("spin").disabled = d;
     document.getElementById("update").disabled = d;
@@ -347,8 +640,7 @@
 
   function updateFromTextarea() {
     if (spinning) return;
-    var parsed = parseNames(namesInput.value);
-    names = parsed;
+    names = parseNames(namesInput.value);
     rotation = 0;
     drawWheel();
     ticker.classList.remove("win");
