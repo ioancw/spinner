@@ -33,19 +33,22 @@
     100% { background-position: 0% 50%; }
   }
   h1 {
-    font-size: clamp(1.5rem, 5vw, 2.4rem);
+    font-size: clamp(1.5rem, 5.4vw, 2.5rem);
     margin: 0.4em 0 0.2em;
     text-align: center;
-    background: linear-gradient(90deg, #ffcb05, #ff006e, #3a86ff, #06d6a0, #ffcb05);
-    background-size: 200% auto;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: linear-gradient(180deg, #fff6c0 0%, #ffd23f 45%, #ffb400 55%, #f79b00 100%);
+    background-size: 100% 200%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: shimmer 4s linear infinite;
-    filter: drop-shadow(0 2px 10px rgba(255, 0, 110, 0.35));
+    animation: shimmer 3.5s ease-in-out infinite;
+    filter: drop-shadow(0 2px 0 #8a5200) drop-shadow(0 3px 6px rgba(0,0,0,0.55));
   }
   @keyframes shimmer {
-    to { background-position: 200% center; }
+    0%, 100% { background-position: 50% 0%; }
+    50%      { background-position: 50% 100%; }
   }
   .subtitle { color: var(--muted); margin: 0 0 12px; text-align: center; font-size: 0.9rem; }
   .ticker {
@@ -98,22 +101,33 @@
   .wheel-wrap.spinning .wheel-glow { animation-duration: 1.2s; opacity: 0.8; }
   @keyframes glowSpin { to { transform: rotate(360deg); } }
   canvas#wheel { position: relative; width: 100%; height: 100%; display: block; touch-action: manipulation; z-index: 1; }
+  /* Red Wheel-of-Fortune flapper, pivoting from the top */
   .pointer {
     position: absolute;
-    top: -10px;
+    top: -14px;
     left: 50%;
-    transform: translateX(-50%);
     width: 0; height: 0;
-    border-left: 18px solid transparent;
-    border-right: 18px solid transparent;
-    border-top: 30px solid var(--accent);
-    filter: drop-shadow(0 0 6px rgba(255,203,5,0.9)) drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 40px solid #e01e2c;
+    transform: translateX(-50%);
+    transform-origin: 50% 4px;
+    filter: drop-shadow(0 3px 3px rgba(0,0,0,0.55));
     z-index: 4;
   }
-  .pointer.kick { animation: kick 0.12s ease; }
+  .pointer::after {
+    content: "";
+    position: absolute;
+    top: -18px; left: -9px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fff, #d0d0d0 55%, #888);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  }
+  .pointer.kick { animation: kick 0.13s ease; }
   @keyframes kick {
-    0% { transform: translateX(-50%) rotate(0deg); }
-    50% { transform: translateX(-50%) rotate(-14deg); }
+    0%   { transform: translateX(-50%) rotate(0deg); }
+    45%  { transform: translateX(-50%) rotate(16deg); }
     100% { transform: translateX(-50%) rotate(0deg); }
   }
   .hub {
@@ -122,23 +136,25 @@
     transform: translate(-50%, -50%);
     width: 23%; height: 23%;
     border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #fff6c0, var(--accent) 60%, #e0a800);
-    color: #1b1d3a;
-    border: 5px solid #fff;
+    background: radial-gradient(circle at 35% 30%, #ffffff, #d7dbe0 45%, #9aa0a8 80%, #6b7078);
+    color: #22252e;
+    border: 5px solid #f4d35e;
     font-weight: 900;
     font-size: clamp(0.8rem, 3vw, 1.1rem);
+    letter-spacing: 1px;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.6);
     cursor: pointer;
     z-index: 3;
     display: flex; align-items: center; justify-content: center;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
-    box-shadow: 0 0 0 0 rgba(255,203,5,0.7), 0 4px 18px rgba(0,0,0,0.45);
+    box-shadow: 0 0 0 0 rgba(244,211,94,0.8), 0 4px 18px rgba(0,0,0,0.5);
     animation: hubPulse 2s ease-in-out infinite;
   }
   @keyframes hubPulse {
-    0%   { box-shadow: 0 0 0 0 rgba(255,203,5,0.7), 0 4px 18px rgba(0,0,0,0.45); }
-    70%  { box-shadow: 0 0 0 16px rgba(255,203,5,0), 0 4px 18px rgba(0,0,0,0.45); }
-    100% { box-shadow: 0 0 0 0 rgba(255,203,5,0), 0 4px 18px rgba(0,0,0,0.45); }
+    0%   { box-shadow: 0 0 0 0 rgba(244,211,94,0.8), 0 4px 18px rgba(0,0,0,0.5); }
+    70%  { box-shadow: 0 0 0 16px rgba(244,211,94,0), 0 4px 18px rgba(0,0,0,0.5); }
+    100% { box-shadow: 0 0 0 0 rgba(244,211,94,0), 0 4px 18px rgba(0,0,0,0.5); }
   }
   .hub:active { transform: translate(-50%, -50%) scale(0.92); }
   .controls {
@@ -261,15 +277,16 @@
   "use strict";
 
   var DEFAULT_NAMES = [
-    "Matilda", "Charlie", "Sophie", "Pippi", "Charlotte", "Despereaux",
-    "Lyra", "Stuart", "Coraline", "Hermione", "Stanley", "Auggie",
-    "Templeton", "Fern", "Willy Wonka", "James", "Lucy", "Aslan",
-    "Peter", "Bilbo"
+    "Matilda", "Charlie", "Sophie", "Pippi", "Charlotte",
+    "Despereaux", "Lyra", "Coraline", "Hermione", "Auggie",
+    "Templeton", "Fern", "James", "Aslan", "Bilbo"
   ];
 
+  // Wheel-of-Fortune-style vibrant wedge colours
   var PALETTE = [
-    "#e63946", "#f4a261", "#2a9d8f", "#457b9d", "#e76f51",
-    "#8338ec", "#3a86ff", "#ff006e", "#06d6a0", "#ffbe0b"
+    "#e6194b", "#f58231", "#ffb400", "#3cb44b", "#12b5a5",
+    "#2196f3", "#3f51b5", "#8e24aa", "#e91e8c", "#ff5c8a",
+    "#8bc34a", "#00bcd4", "#c0392b", "#5c6bc0", "#009e60"
   ];
 
   var prefersReduced = window.matchMedia &&
@@ -321,70 +338,91 @@
     }
 
     var arc = (Math.PI * 2) / n;
+    var tyreW = Math.max(9, w * 0.03);   // dark outer "tyre" thickness
+    var outer = radius - tyreW;           // where the wedges end
+    var GOLD = "#f7d774";
+
     ctx.save();
     ctx.translate(cx, cy);
     ctx.rotate(rotation);
 
+    // colour wedges
     for (var i = 0; i < n; i++) {
       var start = i * arc;
       var base = PALETTE[i % PALETTE.length];
-      // radial gradient per slice for depth/shine
-      var grad = ctx.createRadialGradient(0, 0, radius * 0.12, 0, 0, radius);
-      grad.addColorStop(0, lighten(base, 0.35));
-      grad.addColorStop(0.65, base);
-      grad.addColorStop(1, darken(base, 0.22));
+      var grad = ctx.createRadialGradient(0, 0, outer * 0.14, 0, 0, outer);
+      grad.addColorStop(0, lighten(base, 0.22));
+      grad.addColorStop(0.6, base);
+      grad.addColorStop(1, darken(base, 0.10));
 
       ctx.beginPath();
       ctx.moveTo(0, 0);
-      ctx.arc(0, 0, radius, start, start + arc);
+      ctx.arc(0, 0, outer, start, start + arc);
       ctx.closePath();
       ctx.fillStyle = grad;
       ctx.fill();
-      ctx.strokeStyle = "rgba(255,255,255,0.25)";
-      ctx.lineWidth = 2;
-      ctx.stroke();
 
-      // label
+      // gold divider spoke on the wedge's leading edge
+      ctx.save();
+      ctx.rotate(start);
+      ctx.strokeStyle = GOLD;
+      ctx.lineWidth = Math.max(1.5, w * 0.0045);
+      ctx.beginPath();
+      ctx.moveTo(outer * 0.05, 0);
+      ctx.lineTo(outer, 0);
+      ctx.stroke();
+      ctx.restore();
+
+      // name — white with a dark outline for readability on any colour
       ctx.save();
       ctx.rotate(start + arc / 2);
       ctx.textAlign = "right";
       ctx.textBaseline = "middle";
-      ctx.fillStyle = "#fff";
-      ctx.shadowColor = "rgba(0,0,0,0.55)";
-      ctx.shadowBlur = 4;
-      var fontSize = Math.max(11, Math.min(w * 0.045, (radius * 0.9) / Math.max(names[i].length, 6) * 1.6));
-      ctx.font = "bold " + fontSize + "px system-ui, sans-serif";
-      var label = names[i].length > 16 ? names[i].slice(0, 15) + "…" : names[i];
-      ctx.fillText(label, radius - 16, 0);
+      var fontSize = Math.max(11, Math.min(w * 0.046, (outer * 0.82) / Math.max(names[i].length, 6) * 1.7));
+      ctx.font = "800 " + fontSize + "px system-ui, sans-serif";
+      var label = names[i].length > 15 ? names[i].slice(0, 14) + "…" : names[i];
+      ctx.lineJoin = "round";
+      ctx.lineWidth = fontSize * 0.2;
+      ctx.strokeStyle = "rgba(0,0,0,0.78)";
+      ctx.strokeText(label, outer - 14, 0);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillText(label, outer - 14, 0);
       ctx.restore();
     }
-    ctx.restore();
 
-    // metallic outer rim
-    var rim = ctx.createLinearGradient(0, 0, w, w);
-    rim.addColorStop(0, "#fff7cc");
-    rim.addColorStop(0.5, "#ffcb05");
-    rim.addColorStop(1, "#b8860b");
+    // dark tyre ring around the wedges
     ctx.beginPath();
-    ctx.arc(cx, cy, radius + 2, 0, Math.PI * 2);
-    ctx.strokeStyle = rim;
-    ctx.lineWidth = 8;
+    ctx.arc(0, 0, outer + tyreW / 2, 0, Math.PI * 2);
+    ctx.strokeStyle = "#161616";
+    ctx.lineWidth = tyreW;
     ctx.stroke();
 
-    // studs around the rim for arcade flair
-    var studs = Math.min(Math.max(n, 12), 24);
-    for (var s = 0; s < studs; s++) {
-      var a = (s / studs) * Math.PI * 2;
-      var sx = cx + Math.cos(a) * (radius + 2);
-      var sy = cy + Math.sin(a) * (radius + 2);
+    // gold trims on the inner and outer edge of the tyre
+    ctx.strokeStyle = GOLD;
+    ctx.lineWidth = Math.max(2, w * 0.006);
+    ctx.beginPath(); ctx.arc(0, 0, outer + 1, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, 0, radius - 1, 0, Math.PI * 2); ctx.stroke();
+
+    // silver pegs at every wedge boundary — they rotate past the flapper
+    var pegR = outer + tyreW / 2;
+    var pegRad = Math.max(3, w * 0.0115);
+    for (var p = 0; p < n; p++) {
+      var pa = p * arc;
+      var px = Math.cos(pa) * pegR, py = Math.sin(pa) * pegR;
+      var pg = ctx.createRadialGradient(px - pegRad * 0.3, py - pegRad * 0.3, pegRad * 0.2, px, py, pegRad);
+      pg.addColorStop(0, "#ffffff");
+      pg.addColorStop(0.5, "#d6d6d6");
+      pg.addColorStop(1, "#787878");
       ctx.beginPath();
-      ctx.arc(sx, sy, 3.2, 0, Math.PI * 2);
-      ctx.fillStyle = "#fff";
-      ctx.shadowColor = "rgba(255,255,255,0.9)";
-      ctx.shadowBlur = 6;
+      ctx.arc(px, py, pegRad, 0, Math.PI * 2);
+      ctx.fillStyle = pg;
       ctx.fill();
-      ctx.shadowBlur = 0;
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "rgba(0,0,0,0.4)";
+      ctx.stroke();
     }
+
+    ctx.restore();
   }
 
   function lighten(hex, amt) { return mix(hex, "#ffffff", amt); }
