@@ -6,8 +6,6 @@
 <title>Random Wheel of Class Rep</title>
 <style>
   :root {
-    --bg: #0f1024;
-    --panel: #1b1d3a;
     --accent: #ffcb05;
     --text: #f4f4ff;
     --muted: #a6a8d0;
@@ -59,7 +57,6 @@
     text-align: center;
     color: var(--accent);
     text-shadow: 0 2px 12px rgba(255, 203, 5, 0.35);
-    transition: transform 0.15s ease;
   }
   .ticker.flashing {
     color: #fff;
@@ -194,15 +191,11 @@
     transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
     -webkit-tap-highlight-color: transparent;
   }
-  button.primary {
-    background: linear-gradient(135deg, #ffcb05, #ff8a00);
-    color: #2a1500;
-    box-shadow: 0 4px 16px rgba(255,138,0,0.4);
-  }
   button:hover { filter: brightness(1.08); }
   button:active { transform: translateY(1px); }
   button:disabled { filter: grayscale(0.6) opacity(0.6); cursor: default; }
   .hint { color: var(--muted); font-size: 0.8rem; text-align: center; margin: 4px 0 24px; }
+  .field-label { color: var(--muted); font-size: 0.8rem; margin: 0 0 -4px 2px; }
 
   /* Confetti + winner banner overlay */
   #fx {
@@ -260,7 +253,7 @@
   </div>
 
   <div class="controls">
-    <label for="names" class="hint" style="text-align:left;margin:0 0 -4px 2px;">Names (one per line)</label>
+    <label for="names" class="field-label">Names (one per line)</label>
     <textarea id="names" spellcheck="false" aria-label="Names, one per line"></textarea>
     <div class="btn-row">
       <button id="update" type="button">Update wheel</button>
@@ -299,6 +292,9 @@
   var wheelWrap = document.getElementById("wheelWrap");
   var pointer = document.getElementById("pointer");
   var banner = document.getElementById("banner");
+  var hubBtn = document.getElementById("hub");
+  var updateBtn = document.getElementById("update");
+  var resetBtn = document.getElementById("reset");
 
   var names = DEFAULT_NAMES.slice();
   var rotation = 0;          // current rotation in radians
@@ -315,6 +311,17 @@
   }
 
   function size() { return canvas.width; }
+
+  // Match the canvas buffer to its displayed size so it stays crisp on
+  // high-DPI screens (the 600x600 attributes are only a no-JS fallback).
+  function fitCanvas() {
+    var dpr = window.devicePixelRatio || 1;
+    var px = Math.round(wheelWrap.clientWidth * dpr);
+    if (px > 0 && px !== canvas.width) {
+      canvas.width = px;
+      canvas.height = px;
+    }
+  }
 
   /* ---------- Wheel drawing ---------- */
   function drawWheel() {
@@ -453,6 +460,8 @@
     stopTickerFlash();
     ticker.classList.remove("win");
     ticker.classList.add("flashing");
+    // silence the live region while names strobe; only the winner is announced
+    ticker.setAttribute("aria-live", "off");
     tickerTimer = setInterval(function () {
       if (names.length === 0) return;
       var r = Math.floor(Math.random() * names.length);
@@ -462,6 +471,7 @@
   function stopTickerFlash() {
     if (tickerTimer) { clearInterval(tickerTimer); tickerTimer = null; }
     ticker.classList.remove("flashing");
+    ticker.setAttribute("aria-live", "polite");
   }
 
   function announceWinner() {
@@ -561,12 +571,9 @@
     fx.width = window.innerWidth;
     fx.height = window.innerHeight;
   }
-  window.addEventListener("resize", resizeFx);
-  resizeFx();
 
   function burstConfetti() {
     if (prefersReduced) return;
-    var colors = PALETTE;
     var count = 140;
     for (var i = 0; i < count; i++) {
       confetti.push({
@@ -575,7 +582,7 @@
         vx: (Math.random() - 0.5) * 11,
         vy: Math.random() * -13 - 4,
         size: 5 + Math.random() * 7,
-        color: colors[Math.floor(Math.random() * colors.length)],
+        color: PALETTE[Math.floor(Math.random() * PALETTE.length)],
         rot: Math.random() * Math.PI * 2,
         vr: (Math.random() - 0.5) * 0.3,
         life: 0
@@ -614,9 +621,9 @@
 
   /* ---------- Controls ---------- */
   function setButtonsDisabled(d) {
-    document.getElementById("update").disabled = d;
-    document.getElementById("reset").disabled = d;
-    document.getElementById("hub").disabled = d;
+    updateBtn.disabled = d;
+    resetBtn.disabled = d;
+    hubBtn.disabled = d;
   }
 
   function parseNames(text) {
@@ -630,6 +637,7 @@
   function updateFromTextarea() {
     if (spinning) return;
     names = parseNames(namesInput.value);
+    syncTextarea();
     rotation = 0;
     drawWheel();
     updateStrap();
@@ -649,12 +657,19 @@
   }
 
   // Wire up
-  document.getElementById("hub").addEventListener("click", spin);
-  document.getElementById("update").addEventListener("click", updateFromTextarea);
-  document.getElementById("reset").addEventListener("click", resetNames);
+  hubBtn.addEventListener("click", spin);
+  updateBtn.addEventListener("click", updateFromTextarea);
+  resetBtn.addEventListener("click", resetNames);
+  window.addEventListener("resize", function () {
+    resizeFx();
+    fitCanvas();
+    drawWheel();
+  });
 
   // Init
   syncTextarea();
+  resizeFx();
+  fitCanvas();
   drawWheel();
   updateStrap();
 })();
