@@ -6,16 +6,17 @@
 <title>Random Wheel of Class Rep</title>
 <style>
   :root {
-    --accent: #ffcb05;
-    --text: #f4f4ff;
-    --muted: #a6a8d0;
+    --accent: #d8b45a;   /* champagne gold */
+    --gold-deep: #c9a24b;
+    --ivory: #f5efdf;
+    --text: #ece5d1;
+    --muted: #a49b83;
+    --serif: "Didot", "Bodoni MT", "Playfair Display", "Cochin", Georgia, "Times New Roman", serif;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
-    background: linear-gradient(135deg, #1a0b2e 0%, #16213e 35%, #0f3460 70%, #1a0b2e 100%);
-    background-size: 300% 300%;
-    animation: bgShift 18s ease infinite;
+    background: radial-gradient(ellipse 130% 100% at 50% -10%, #232c4d 0%, #141b32 45%, #0a0e1c 100%) fixed;
     color: var(--text);
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     min-height: 100vh;
@@ -25,59 +26,54 @@
     padding: 16px;
     overflow-x: hidden;
   }
-  @keyframes bgShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
   h1 {
-    font-size: clamp(1.5rem, 5.4vw, 2.5rem);
-    margin: 0.4em 0 0.2em;
+    font-family: var(--serif);
+    font-size: clamp(1.6rem, 5.6vw, 2.6rem);
+    font-weight: 600;
+    margin: 0.5em 0 0.15em;
     text-align: center;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-shadow: 0 1px 0 rgba(0,0,0,0.6), 0 3px 14px rgba(216,180,90,0.25);
+  }
+  .subtitle {
+    color: var(--muted);
+    margin: 0 0 14px;
+    text-align: center;
+    font-size: 0.72rem;
     text-transform: uppercase;
-    background: linear-gradient(180deg, #fff6c0 0%, #ffd23f 45%, #ffb400 55%, #f79b00 100%);
-    background-size: 100% 200%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: shimmer 3.5s ease-in-out infinite;
-    filter: drop-shadow(0 2px 0 #8a5200) drop-shadow(0 3px 6px rgba(0,0,0,0.55));
+    letter-spacing: 3px;
   }
-  @keyframes shimmer {
-    0%, 100% { background-position: 50% 0%; }
-    50%      { background-position: 50% 100%; }
-  }
-  .subtitle { color: var(--muted); margin: 0 0 12px; text-align: center; font-size: 0.9rem; }
   .ticker {
+    font-family: var(--serif);
     font-size: clamp(1.5rem, 6.5vw, 2.6rem);
-    font-weight: 800;
-    letter-spacing: 0.5px;
+    font-weight: 600;
+    letter-spacing: 1px;
     min-height: 1.4em;
     text-align: center;
     color: var(--accent);
-    text-shadow: 0 2px 12px rgba(255, 203, 5, 0.35);
+    text-shadow: 0 2px 10px rgba(216, 180, 90, 0.25);
   }
   .ticker.flashing {
-    color: #fff;
-    animation: tickerPulse 0.18s ease-in-out infinite alternate;
+    color: var(--ivory);
+    animation: tickerPulse 0.2s ease-in-out infinite alternate;
   }
   @keyframes tickerPulse {
-    from { text-shadow: 0 0 8px rgba(255,255,255,0.5); }
-    to   { text-shadow: 0 0 22px rgba(58,134,255,0.9), 0 0 38px rgba(255,0,110,0.6); }
+    from { text-shadow: 0 0 6px rgba(232,214,160,0.35); }
+    to   { text-shadow: 0 0 16px rgba(216,180,90,0.8); }
   }
   .ticker.win {
-    color: #fff;
-    animation: winPop 0.6s cubic-bezier(.18,.89,.32,1.28) both, winGlow 1.1s ease-in-out infinite alternate;
+    color: var(--ivory);
+    animation: winPop 0.6s cubic-bezier(.18,.89,.32,1.28) both, winGlow 1.4s ease-in-out infinite alternate;
   }
   @keyframes winPop {
-    0%   { transform: scale(0.6); }
-    60%  { transform: scale(1.25); }
-    100% { transform: scale(1.12); }
+    0%   { transform: scale(0.8); }
+    60%  { transform: scale(1.12); }
+    100% { transform: scale(1.06); }
   }
   @keyframes winGlow {
-    from { text-shadow: 0 0 14px rgba(255,203,5,0.8), 0 0 28px rgba(255,0,110,0.5); }
-    to   { text-shadow: 0 0 26px rgba(255,203,5,1), 0 0 52px rgba(58,134,255,0.8); }
+    from { text-shadow: 0 0 10px rgba(216,180,90,0.6); }
+    to   { text-shadow: 0 0 22px rgba(216,180,90,0.95); }
   }
   .wheel-wrap {
     position: relative;
@@ -85,18 +81,25 @@
     aspect-ratio: 1 / 1;
     margin: 8px 0 4px;
   }
+  /* seat shadow so the wheel sits on the page, plus a still gold halo */
+  .wheel-wrap::before {
+    content: "";
+    position: absolute;
+    inset: 3%;
+    border-radius: 50%;
+    box-shadow: 0 22px 46px rgba(0,0,0,0.55);
+  }
   .wheel-glow {
     position: absolute;
-    inset: -6%;
+    inset: -5%;
     border-radius: 50%;
-    background: conic-gradient(from 0deg, #ff006e, #ffcb05, #06d6a0, #3a86ff, #8338ec, #ff006e);
-    filter: blur(22px);
-    opacity: 0.55;
+    background: radial-gradient(circle, rgba(216,180,90,0.30) 55%, rgba(216,180,90,0) 72%);
+    filter: blur(24px);
+    opacity: 0.5;
     z-index: 0;
-    animation: glowSpin 6s linear infinite;
+    transition: opacity 0.6s ease;
   }
-  .wheel-wrap.spinning .wheel-glow { animation-duration: 1.2s; opacity: 0.8; }
-  @keyframes glowSpin { to { transform: rotate(360deg); } }
+  .wheel-wrap.spinning .wheel-glow { opacity: 0.85; }
   canvas#wheel { position: relative; width: 100%; height: 100%; display: block; touch-action: manipulation; z-index: 1; }
   /* Red Wheel-of-Fortune flapper, pivoting from the top */
   .pointer {
@@ -106,7 +109,7 @@
     width: 0; height: 0;
     border-left: 15px solid transparent;
     border-right: 15px solid transparent;
-    border-top: 40px solid #e01e2c;
+    border-top: 40px solid #8f2433;   /* claret */
     transform: translateX(-50%);
     transform-origin: 50% 4px;
     filter: drop-shadow(0 3px 3px rgba(0,0,0,0.55));
@@ -118,7 +121,7 @@
     top: -18px; left: -9px;
     width: 18px; height: 18px;
     border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #fff, #d0d0d0 55%, #888);
+    background: radial-gradient(circle at 35% 30%, #f4e3b2, #c9a24b 55%, #77592a);
     box-shadow: 0 1px 2px rgba(0,0,0,0.5);
   }
   .pointer.kick { animation: kick 0.13s ease; }
@@ -133,25 +136,27 @@
     transform: translate(-50%, -50%);
     width: 23%; height: 23%;
     border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #ffffff, #d7dbe0 45%, #9aa0a8 80%, #6b7078);
-    color: #22252e;
-    border: 5px solid #f4d35e;
-    font-weight: 900;
-    font-size: clamp(0.8rem, 3vw, 1.1rem);
-    letter-spacing: 1px;
-    text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+    min-width: 0;
+    background: linear-gradient(160deg, #ece9e1 0%, #c9c5ba 40%, #97938a 62%, #d6d2c8 100%);
+    color: #55503f;
+    border: 3px solid var(--gold-deep);
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: clamp(0.8rem, 3vw, 1.05rem);
+    letter-spacing: 3px;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.55);
     cursor: pointer;
     z-index: 3;
     display: flex; align-items: center; justify-content: center;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
-    box-shadow: 0 0 0 0 rgba(244,211,94,0.8), 0 4px 18px rgba(0,0,0,0.5);
-    animation: hubPulse 2s ease-in-out infinite;
+    box-shadow: 0 0 0 0 rgba(201,162,75,0.5), 0 4px 18px rgba(0,0,0,0.5);
+    animation: hubPulse 2.4s ease-in-out infinite;
   }
   @keyframes hubPulse {
-    0%   { box-shadow: 0 0 0 0 rgba(244,211,94,0.8), 0 4px 18px rgba(0,0,0,0.5); }
-    70%  { box-shadow: 0 0 0 16px rgba(244,211,94,0), 0 4px 18px rgba(0,0,0,0.5); }
-    100% { box-shadow: 0 0 0 0 rgba(244,211,94,0), 0 4px 18px rgba(0,0,0,0.5); }
+    0%   { box-shadow: 0 0 0 0 rgba(201,162,75,0.5), 0 4px 18px rgba(0,0,0,0.5); }
+    70%  { box-shadow: 0 0 0 14px rgba(201,162,75,0), 0 4px 18px rgba(0,0,0,0.5); }
+    100% { box-shadow: 0 0 0 0 rgba(201,162,75,0), 0 4px 18px rgba(0,0,0,0.5); }
   }
   .hub:active { transform: translate(-50%, -50%) scale(0.92); }
   .controls {
@@ -167,9 +172,9 @@
     width: 100%;
     min-height: 120px;
     resize: vertical;
-    border-radius: 12px;
-    border: 1px solid #34376b;
-    background: rgba(27, 29, 58, 0.85);
+    border-radius: 10px;
+    border: 1px solid #3a4059;
+    background: rgba(16, 19, 31, 0.7);
     color: var(--text);
     padding: 10px 12px;
     font-size: 0.95rem;
@@ -181,19 +186,20 @@
     flex: 1 1 auto;
     min-width: 120px;
     padding: 12px 14px;
-    border-radius: 12px;
-    border: none;
-    font-size: 1rem;
-    font-weight: 700;
+    border-radius: 10px;
+    border: 1px solid rgba(216,180,90,0.45);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
     cursor: pointer;
-    color: #1b1d3a;
-    background: #d7d9f5;
-    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
+    color: #e6dcc0;
+    background: transparent;
+    transition: background 0.15s ease, transform 0.08s ease;
     -webkit-tap-highlight-color: transparent;
   }
-  button:hover { filter: brightness(1.08); }
+  button:hover { background: rgba(216,180,90,0.1); }
   button:active { transform: translateY(1px); }
-  button:disabled { filter: grayscale(0.6) opacity(0.6); cursor: default; }
+  button:disabled { opacity: 0.4; cursor: default; }
   .hint { color: var(--muted); font-size: 0.8rem; text-align: center; margin: 4px 0 24px; }
   .field-label { color: var(--muted); font-size: 0.8rem; margin: 0 0 -4px 2px; }
 
@@ -207,40 +213,49 @@
   .winner-banner {
     position: fixed;
     top: 38%; left: 50%;
-    transform: translate(-50%, -50%) scale(0.6);
-    background: linear-gradient(135deg, rgba(255,0,110,0.95), rgba(131,56,236,0.95));
-    color: #fff;
-    padding: 18px 30px;
-    border-radius: 18px;
-    font-weight: 900;
+    transform: translate(-50%, -50%) scale(0.94);
+    background: linear-gradient(180deg, #191e30, #10131f);
+    color: var(--ivory);
+    border: 1px solid var(--gold-deep);
+    padding: 20px 36px;
+    border-radius: 14px;
+    font-family: var(--serif);
+    font-weight: 600;
     font-size: clamp(1.4rem, 6vw, 2.6rem);
+    letter-spacing: 1px;
     text-align: center;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 0 4px rgba(255,255,255,0.25) inset;
+    box-shadow: 0 14px 40px rgba(0,0,0,0.6), inset 0 0 0 3px rgba(201,162,75,0.18);
     z-index: 60;
     opacity: 0;
     pointer-events: none;
     max-width: 88vw;
   }
-  .winner-banner.show { animation: bannerIn 2.4s cubic-bezier(.18,.89,.32,1.28) forwards; }
-  .winner-banner small { display: block; font-size: 0.5em; font-weight: 700; opacity: 0.85; margin-bottom: 4px; }
+  .winner-banner.show { animation: bannerIn 2.6s ease forwards; }
+  .winner-banner small {
+    display: block;
+    font-size: 0.42em;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+  }
   @keyframes bannerIn {
-    0%   { opacity: 0; transform: translate(-50%,-50%) scale(0.5) rotate(-6deg); }
-    12%  { opacity: 1; transform: translate(-50%,-50%) scale(1.08) rotate(2deg); }
-    20%  { transform: translate(-50%,-50%) scale(1) rotate(0deg); }
-    82%  { opacity: 1; transform: translate(-50%,-50%) scale(1); }
-    100% { opacity: 0; transform: translate(-50%,-50%) scale(0.95); }
+    0%   { opacity: 0; transform: translate(-50%,-50%) scale(0.94); }
+    12%  { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+    80%  { opacity: 1; }
+    100% { opacity: 0; transform: translate(-50%,-50%) scale(0.98); }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    body { animation: none; }
-    h1 { animation: none; -webkit-text-fill-color: var(--accent); }
-    .ticker, .ticker.win, .ticker.flashing, .hub, .wheel-glow, .hub:active, button:active { animation: none; transition: none; }
+    .ticker.win, .ticker.flashing, .hub, .hub:active, button:active { animation: none; transition: none; }
+    .wheel-glow { transition: none; }
     .winner-banner.show { animation: none; opacity: 1; transform: translate(-50%,-50%) scale(1); }
   }
 </style>
 </head>
 <body>
-  <h1>🎡 Random Wheel of Class Rep</h1>
+  <h1>Random Wheel of Class Rep</h1>
   <p class="subtitle" id="strap">Who's it going to be?</p>
 
   <div class="ticker" id="ticker" aria-live="polite">Ready!</div>
@@ -275,12 +290,15 @@
     "Templeton", "Fern", "James", "Aslan", "Bilbo"
   ];
 
-  // Wheel-of-Fortune-style vibrant wedge colours
+  // muted jewel tones — burgundy, forest, navy, bronze, aubergine…
   var PALETTE = [
-    "#e6194b", "#f58231", "#ffb400", "#3cb44b", "#12b5a5",
-    "#2196f3", "#3f51b5", "#8e24aa", "#e91e8c", "#ff5c8a",
-    "#8bc34a", "#00bcd4", "#c0392b", "#5c6bc0", "#009e60"
+    "#7c2f3f", "#2e5d4b", "#2c3e6b", "#8a6a3b", "#573b63",
+    "#2f6d70", "#6e2f2f", "#46608c", "#5c6b3c", "#7a4a66",
+    "#35584a", "#3b4a7a", "#946b2d", "#4b3b6b", "#285e66"
   ];
+
+  // champagne confetti
+  var CONFETTI_COLORS = ["#d8b45a", "#c9a24b", "#f1e3b6", "#f7f3e8", "#b08d3e"];
 
   var prefersReduced = window.matchMedia &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -331,7 +349,7 @@
     ctx.clearRect(0, 0, w, w);
 
     if (n === 0) {
-      ctx.fillStyle = "#34376b";
+      ctx.fillStyle = "#232838";
       ctx.beginPath();
       ctx.arc(cx, cy, radius, 0, Math.PI * 2);
       ctx.fill();
@@ -346,7 +364,7 @@
     var arc = (Math.PI * 2) / n;
     var tyreW = Math.max(9, w * 0.03);   // dark outer "tyre" thickness
     var outer = radius - tyreW;           // where the wedges end
-    var GOLD = "#f7d774";
+    var GOLD = "#d8b45a";
 
     ctx.save();
     ctx.translate(cx, cy);
@@ -357,9 +375,9 @@
       var start = i * arc;
       var base = PALETTE[i % PALETTE.length];
       var grad = ctx.createRadialGradient(0, 0, outer * 0.14, 0, 0, outer);
-      grad.addColorStop(0, lighten(base, 0.22));
+      grad.addColorStop(0, lighten(base, 0.10));
       grad.addColorStop(0.6, base);
-      grad.addColorStop(1, darken(base, 0.10));
+      grad.addColorStop(1, darken(base, 0.08));
 
       ctx.beginPath();
       ctx.moveTo(0, 0);
@@ -372,7 +390,7 @@
       ctx.save();
       ctx.rotate(start);
       ctx.strokeStyle = GOLD;
-      ctx.lineWidth = Math.max(1.5, w * 0.0045);
+      ctx.lineWidth = Math.max(1, w * 0.003);
       ctx.beginPath();
       ctx.moveTo(outer * 0.05, 0);
       ctx.lineTo(outer, 0);
@@ -385,46 +403,55 @@
       ctx.textAlign = "right";
       ctx.textBaseline = "middle";
       var fontSize = Math.max(11, Math.min(w * 0.046, (outer * 0.82) / Math.max(names[i].length, 6) * 1.7));
-      ctx.font = "800 " + fontSize + "px system-ui, sans-serif";
+      ctx.font = "600 " + fontSize + 'px Georgia, "Times New Roman", serif';
       var label = names[i].length > 15 ? names[i].slice(0, 14) + "…" : names[i];
       ctx.lineJoin = "round";
-      ctx.lineWidth = fontSize * 0.2;
-      ctx.strokeStyle = "rgba(0,0,0,0.78)";
+      ctx.lineWidth = fontSize * 0.12;
+      ctx.strokeStyle = "rgba(0,0,0,0.45)";
       ctx.strokeText(label, outer - 14, 0);
-      ctx.fillStyle = "#ffffff";
+      ctx.fillStyle = "#f5efdf";
       ctx.fillText(label, outer - 14, 0);
       ctx.restore();
     }
 
+    // soft inner shadow around the wedge edge for depth
+    var innerShadow = ctx.createRadialGradient(0, 0, outer * 0.78, 0, 0, outer);
+    innerShadow.addColorStop(0, "rgba(0,0,0,0)");
+    innerShadow.addColorStop(1, "rgba(0,0,0,0.25)");
+    ctx.beginPath();
+    ctx.arc(0, 0, outer, 0, Math.PI * 2);
+    ctx.fillStyle = innerShadow;
+    ctx.fill();
+
     // dark tyre ring around the wedges
     ctx.beginPath();
     ctx.arc(0, 0, outer + tyreW / 2, 0, Math.PI * 2);
-    ctx.strokeStyle = "#161616";
+    ctx.strokeStyle = "#14161f";
     ctx.lineWidth = tyreW;
     ctx.stroke();
 
     // gold trims on the inner and outer edge of the tyre
     ctx.strokeStyle = GOLD;
-    ctx.lineWidth = Math.max(2, w * 0.006);
+    ctx.lineWidth = Math.max(1.5, w * 0.0045);
     ctx.beginPath(); ctx.arc(0, 0, outer + 1, 0, Math.PI * 2); ctx.stroke();
     ctx.beginPath(); ctx.arc(0, 0, radius - 1, 0, Math.PI * 2); ctx.stroke();
 
-    // silver pegs at every wedge boundary — they rotate past the flapper
+    // brass pegs at every wedge boundary — they rotate past the flapper
     var pegR = outer + tyreW / 2;
-    var pegRad = Math.max(3, w * 0.0115);
+    var pegRad = Math.max(2.5, w * 0.009);
     for (var p = 0; p < n; p++) {
       var pa = p * arc;
       var px = Math.cos(pa) * pegR, py = Math.sin(pa) * pegR;
       var pg = ctx.createRadialGradient(px - pegRad * 0.3, py - pegRad * 0.3, pegRad * 0.2, px, py, pegRad);
-      pg.addColorStop(0, "#ffffff");
-      pg.addColorStop(0.5, "#d6d6d6");
-      pg.addColorStop(1, "#787878");
+      pg.addColorStop(0, "#f4e3b2");
+      pg.addColorStop(0.5, "#c9a24b");
+      pg.addColorStop(1, "#77592a");
       ctx.beginPath();
       ctx.arc(px, py, pegRad, 0, Math.PI * 2);
       ctx.fillStyle = pg;
       ctx.fill();
       ctx.lineWidth = 1;
-      ctx.strokeStyle = "rgba(0,0,0,0.4)";
+      ctx.strokeStyle = "rgba(0,0,0,0.45)";
       ctx.stroke();
     }
 
@@ -478,7 +505,7 @@
   }
 
   function showBanner(name) {
-    banner.innerHTML = "<small>🎉 Winner 🎉</small>" + escapeHtml(name);
+    banner.innerHTML = "<small>Class Rep</small>" + escapeHtml(name);
     banner.classList.remove("show");
     void banner.offsetWidth; // restart animation
     banner.classList.add("show");
@@ -569,17 +596,17 @@
 
   function burstConfetti() {
     if (prefersReduced) return;
-    var count = 140;
+    var count = 110;
     for (var i = 0; i < count; i++) {
       confetti.push({
-        x: fx.width / 2 + (Math.random() - 0.5) * 120,
-        y: fx.height * 0.32,
-        vx: (Math.random() - 0.5) * 11,
-        vy: Math.random() * -13 - 4,
-        size: 5 + Math.random() * 7,
-        color: PALETTE[Math.floor(Math.random() * PALETTE.length)],
+        x: fx.width / 2 + (Math.random() - 0.5) * 160,
+        y: fx.height * 0.3,
+        vx: (Math.random() - 0.5) * 7,
+        vy: Math.random() * -9 - 3,
+        size: 4 + Math.random() * 6,
+        color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
         rot: Math.random() * Math.PI * 2,
-        vr: (Math.random() - 0.5) * 0.3,
+        vr: (Math.random() - 0.5) * 0.2,
         life: 0
       });
     }
@@ -588,7 +615,7 @@
 
   function fxFrame() {
     fxCtx.clearRect(0, 0, fx.width, fx.height);
-    var gravity = 0.32;
+    var gravity = 0.18;   // gentle champagne fall
     for (var i = confetti.length - 1; i >= 0; i--) {
       var p = confetti[i];
       p.vy += gravity;
@@ -601,10 +628,10 @@
       fxCtx.translate(p.x, p.y);
       fxCtx.rotate(p.rot);
       fxCtx.fillStyle = p.color;
-      fxCtx.globalAlpha = Math.max(0, 1 - p.life / 130);
-      fxCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+      fxCtx.globalAlpha = Math.max(0, 1 - p.life / 190);
+      fxCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.38);
       fxCtx.restore();
-      if (p.y > fx.height + 40 || p.life > 150) confetti.splice(i, 1);
+      if (p.y > fx.height + 40 || p.life > 210) confetti.splice(i, 1);
     }
     if (confetti.length > 0) {
       requestAnimationFrame(fxFrame);
