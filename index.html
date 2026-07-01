@@ -299,7 +299,6 @@
   var names = DEFAULT_NAMES.slice();
   var rotation = 0;          // current rotation in radians
   var spinning = false;
-  var tickerTimer = null;
   var lastTickSeg = -1;
 
   var strap = document.getElementById("strap");
@@ -456,20 +455,15 @@
     return Math.floor(a / arc) % n;
   }
 
+  // While spinning, the ticker mirrors whichever name is under the flapper
+  // (updated from the animation loop), so it settles exactly when the wheel does.
   function startTickerFlash() {
-    stopTickerFlash();
     ticker.classList.remove("win");
     ticker.classList.add("flashing");
-    // silence the live region while names strobe; only the winner is announced
+    // silence the live region while names flash; only the winner is announced
     ticker.setAttribute("aria-live", "off");
-    tickerTimer = setInterval(function () {
-      if (names.length === 0) return;
-      var r = Math.floor(Math.random() * names.length);
-      ticker.textContent = names[r];
-    }, 75);
   }
   function stopTickerFlash() {
-    if (tickerTimer) { clearInterval(tickerTimer); tickerTimer = null; }
     ticker.classList.remove("flashing");
     ticker.setAttribute("aria-live", "polite");
   }
@@ -537,10 +531,11 @@
       rotation = startRotation + delta * easeOutCubic(t);
       drawWheel();
 
-      // tick + pointer kick when crossing a segment boundary
+      // on each segment boundary: show the name now under the flapper + kick it
       var seg = winnerIndex();
       if (seg !== lastTickSeg) {
         lastTickSeg = seg;
+        ticker.textContent = names[seg];
         pointer.classList.remove("kick");
         void pointer.offsetWidth;
         pointer.classList.add("kick");
