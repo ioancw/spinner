@@ -287,7 +287,7 @@
       <button id="reset" type="button">Reset to book names</button>
     </div>
   </div>
-  <p class="hint">Lands on a random segment using <code>Math.random()</code>.</p>
+  <p class="hint">Winner drawn with <code>crypto.getRandomValues()</code> — uniform and unpredictable.</p>
 
   <canvas id="fx" aria-hidden="true"></canvas>
   <div class="winner-banner" id="banner" aria-hidden="true"></div>
@@ -528,6 +528,19 @@
     });
   }
 
+  // Uniform integer in [0, n) from the OS entropy pool. Rejection sampling
+  // discards the top sliver of the 32-bit range that doesn't divide evenly
+  // by n, so every index is exactly equally likely (no modulo bias).
+  function randomIndex(n) {
+    if (window.crypto && crypto.getRandomValues) {
+      var buf = new Uint32Array(1);
+      var limit = Math.floor(4294967296 / n) * n;
+      do { crypto.getRandomValues(buf); } while (buf[0] >= limit);
+      return buf[0] % n;
+    }
+    return Math.floor(Math.random() * n); // fallback for ancient browsers
+  }
+
   function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
 
   function spin() {
@@ -539,7 +552,7 @@
 
     var n = names.length;
     var arc = (Math.PI * 2) / n;
-    var target = Math.floor(Math.random() * n);  // random outcome via Math.random()
+    var target = randomIndex(n);  // winner drawn from the OS entropy pool
 
     var desiredPointer = target * arc + arc / 2;
     var baseRotation = -Math.PI / 2 - desiredPointer;
